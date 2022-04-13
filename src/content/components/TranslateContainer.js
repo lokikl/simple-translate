@@ -106,7 +106,7 @@ export default class TranslateContainer extends Component {
     const secondState = !result.isError && shouldShowBothLangs === true
       ? {
         secondResultText: secondResult.resultText,
-        secondCandidateText: secondResult.candidateText,
+        secondCandidateText: getSettings("ifShowCandidate") ? secondResult.candidateText : "",
         secondIsError: secondResult.isError,
         secondErrorMessage: secondResult.errorMessage,
       }
