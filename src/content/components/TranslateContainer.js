@@ -42,7 +42,11 @@ export default class TranslateContainer extends Component {
       resultText: "",
       candidateText: "",
       isError: false,
-      errorMessage: ""
+      errorMessage: "",
+      secondResultText: "",
+      secondCandidateText: "",
+      secondIsError: false,
+      secondErrorMessage: "",
     };
     this.selectedText = props.selectedText;
     this.selectedPosition = props.selectedPosition;
@@ -88,10 +92,25 @@ export default class TranslateContainer extends Component {
     let result = await translateText(this.selectedText);
     const targetLang = getSettings("targetLang");
     const secondLang = getSettings("secondTargetLang");
+    const shouldShowBothLangs = true; // TODO: add to settings
     const shouldSwitchSecondLang =
+      shouldShowBothLangs !== true &&
       getSettings("ifChangeSecondLangOnPage") &&
       result.sourceLanguage.split("-")[0] === targetLang.split("-")[0] && result.percentage > 0 && targetLang !== secondLang;
     if (shouldSwitchSecondLang) result = await translateText(this.selectedText, secondLang);
+
+    const secondResult = !result.isError && shouldShowBothLangs === true
+      ? await translateText(this.selectedText, secondLang)
+      : false;
+
+    const secondState = !result.isError && shouldShowBothLangs === true
+      ? {
+        secondResultText: secondResult.resultText,
+        secondCandidateText: secondResult.candidateText,
+        secondIsError: secondResult.isError,
+        secondErrorMessage: secondResult.errorMessage,
+      }
+      : {};
 
     this.setState({
       shouldShowPanel: true,
@@ -100,7 +119,8 @@ export default class TranslateContainer extends Component {
       candidateText: getSettings("ifShowCandidate") ? result.candidateText : "",
       isError: result.isError,
       errorMessage: result.errorMessage,
-      currentLang: shouldSwitchSecondLang ? secondLang : targetLang
+      currentLang: shouldSwitchSecondLang ? secondLang : targetLang,
+      ...secondState,
     });
   };
 
@@ -125,6 +145,10 @@ export default class TranslateContainer extends Component {
           candidateText={this.state.candidateText}
           isError={this.state.isError}
           errorMessage={this.state.errorMessage}
+          secondResultText={this.state.secondResultText}
+          secondCandidateText={this.state.secondCandidateText}
+          secondIsError={this.state.secondIsError}
+          secondErrorMessage={this.state.secondErrorMessage}
           hidePanel={this.hidePanel}
         />
       </div>

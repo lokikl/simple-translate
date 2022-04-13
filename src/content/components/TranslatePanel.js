@@ -162,7 +162,10 @@ export default class TranslatePanel extends Component {
   };
 
   render = () => {
-    const { shouldShow, selectedText, currentLang, resultText, candidateText, isError, errorMessage } = this.props;
+    const { shouldShow, selectedText, currentLang,
+      resultText, candidateText, isError, errorMessage,
+      secondResultText, secondCandidateText, secondIsError, secondErrorMessage
+    } = this.props;
     const { width, height } = this.state.shouldResize
       ? { width: parseInt(getSettings("width")), height: parseInt(getSettings("height")) }
       : { width: this.state.panelWidth, height: this.state.panelHeight };
@@ -215,6 +218,23 @@ export default class TranslatePanel extends Component {
                     browser.i18n.getMessage("openInDeeplLabel")}
                 </a>
               </p>
+            )}
+
+            {secondResultText !== "" && (
+              <div>
+                <br />
+                <p className="simple-translate-result" style={resultStyles} dir="auto">
+                  {splitLine(secondResultText)}
+                </p>
+                <p className="simple-translate-candidate" style={candidateStyles} dir="auto">
+                  {splitLine(secondCandidateText)}
+                </p>
+                {secondIsError && (
+                  <p className="simple-translate-error" style={candidateStyles}>
+                    {secondErrorMessage}
+                  </p>
+                )}
+              </div>
             )}
           </div>
         </div>
